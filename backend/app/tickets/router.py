@@ -1,0 +1,50 @@
+
+from app.db.database import get_session as async_session
+from fastapi import APIRouter, Depends, HTTPException
+from .schemas import TicketCreate, TicketOut
+from .crud import list_all_tickets, list_tickets_by_user, create_ticket, set_ticket_status
+from app.auth import auth
+from fastapi import APIRouter, HTTPException
+
+# 创建认证路由实例，设置统一前缀和标签
+router = APIRouter(
+    prefix="/tickets",
+    tags=["auth"]  # API文档中会将这些接口归为"auth"组
+)
+
+
+@router.get("/", response_model=list[TicketOut])
+async def list_tickets(current=Depends(auth.get_current_user)):
+    async with async_session() as session:
+        if current.role == "employer":
+            tickets = await list_all_tickets(session)
+        else:
+            tickets = await list_tickets_by_user(session, current.id)
+        return tickets
+
+@router.post("/", response_model=TicketOut, status_code=201)
+async def create_ticket_api(ticket: TicketCreate, current=Depends(auth.get_current_user)):
+    if current.role != "employee":
+        raise HTTPException(status_code=403, detail="Only employees create tickets")
+    async with async_session() as session:
+        return await create_ticket(session, current.id, ticket)
+
+@router.post("/{ticket_id}/approve")
+async def approve_ticket(ticket_id: int, current=Depends(auth.get_current_user)):
+    if current.role != "employer":
+        raise HTTPException(status_code=403, detail="Only employers can approve")
+    async with async_session() as session:
+        t = await set_ticket_status(session, ticket_id, "approved")
+        if not t:
+            raise HTTPException(status_code=404, detail="Ticket not found")
+        return {"ok": True}
+
+@router.post("/{ticket_id}/deny")
+async def deny_ticket(ticket_id: int, current=Depends(auth.get_current_user)):
+    if current.role != "employer":
+        raise HTTPException(status_code=403, detail="Only employers can deny")
+    async with async_session() as session:
+        t = await set_ticket_status(session, ticket_id, "denied")
+        if not t:
+            raise HTTPException(status_code=404, detail="Ticket not found")
+        return {"ok": True}
