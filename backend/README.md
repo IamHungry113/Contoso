@@ -1,7 +1,25 @@
 # 1 init
 
+active your virtual env
+
+```sh
+source .venv/bin/activate
+
+```
+
+install packages
+
 ```sh
 uv sync
+```
+
+install black in virtual env
+
+```sh
+
+uv pip install black
+uv pip install pre-commit
+pre-commit install
 ```
 
 ## setup db

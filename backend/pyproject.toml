@@ -18,3 +18,16 @@ dependencies = [
 [pip]
 index-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 extra-index-urls = []
+
+[tool.black]
+line-length = 100
+target-version = ['py39']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | build
+  | dist
+)/
+'''
