@@ -11,7 +11,7 @@ bearer = HTTPBearer()
 
 def create_access_token(data: dict, expires_delta: int = 60*24*7):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=expires_delta)
+    expire = datetime.now() + timedelta(minutes=expires_delta)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET, algorithm=ALGO)
 
