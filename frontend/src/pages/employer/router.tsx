@@ -1,20 +1,14 @@
-import { CreateTicket } from './createTickets';
-import { TicketList } from './ticketsList';
+import { TicketList } from '../employee/ticketsList';
 import { Navigate } from 'react-router-dom';
 import { RoutePath } from '../routePath';
 import type { RouteObject } from 'react-router';
 
-export const employeeRoutes: RouteObject[] = [
+export const employerRoutes: RouteObject[] = [
   {
     index: true,
     path: RoutePath.ticketList,
     element: <TicketList />,
     handle: { title: 'Ticket List' },
-  },
-  {
-    path: RoutePath.createTickets,
-    element: <CreateTicket />,
-    handle: { title: 'Create Ticket' },
   },
   {
     path: '*',

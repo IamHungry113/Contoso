@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import type { AppDispatch } from '../../store';
 import { createTicket } from '../../store/ticketSlice';
+import { RoutePath } from '../routePath';
 
 type CreateTicketForm = {
   date: string;
@@ -56,10 +57,16 @@ export const CreateTicket = () => {
   };
 
   return (
-    <div className="flex justify-center bg-white">
-      <div className="w-full max-w-md border border-gray-300 rounded-lg shadow-sm p-6 bg-white">
-        <h2 className="text-2xl font-bold text-black text-center mb-6">创建购买记录</h2>
-
+    <div className="justify-items-center h-full bg-white flex-col">
+      <button
+        className="px-3 py-1 mb-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+        onClick={() => {
+          navigate(`/${RoutePath.Employee}/${RoutePath.ticketList}`);
+        }}
+      >
+        to list
+      </button>
+      <div className="w-full max-w-md border border-gray-300 rounded-lg shadow-sm p-6 bg-white item-center">
         {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">

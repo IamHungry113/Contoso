@@ -6,7 +6,7 @@ import type { RoleEnum } from '../pages/register/enum';
 export interface User {
   id: number;
   email: string;
-  role: 'employee' | 'employer';
+  role: RoleEnum;
 }
 
 interface UserState {

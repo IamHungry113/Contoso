@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../store';
 import { fetchTickets } from '../../store/ticketSlice';
+import { useNavigate } from 'react-router-dom';
+import { RoutePath } from '../routePath';
+import { RoleEnum } from '../register/enum';
 
 interface Ticket {
   id: number;
@@ -18,13 +21,14 @@ export const TicketList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const { user } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     const fetchTic = async () => {
       try {
         setLoading(true);
         const res = await dispatch(fetchTickets());
-        console.log(res.payload);
         setTickets(res.payload);
       } catch (err: any) {
         setError(err.message || 'Failed to fetch tickets');
@@ -54,7 +58,14 @@ export const TicketList = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">Ticket List</h1>
+      <button
+        className="px-3 py-1 mb-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+        onClick={() => {
+          navigate(`/${RoutePath.Employee}/${RoutePath.createTickets}`);
+        }}
+      >
+        to create
+      </button>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {tickets.map((ticket) => (
           <div
@@ -80,14 +91,16 @@ export const TicketList = () => {
                 Created at: {new Date(ticket.created_at).toLocaleString()}
               </p>
             </div>
-            <div className="mt-4 flex justify-end space-x-2">
-              <button className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
-                Edit
-              </button>
-              <button className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
-                Delete
-              </button>
-            </div>
+            {user?.role === RoleEnum.Employer && (
+              <div className="mt-4 flex justify-end space-x-2">
+                <button className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+                  approve
+                </button>
+                <button className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                  deny
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

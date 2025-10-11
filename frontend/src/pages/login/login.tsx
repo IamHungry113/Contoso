@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { loginUser } from '../../store/userSlice';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
 import type { AppDispatch } from '../../store';
+import { RoleEnum } from '../register/enum';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
+
   const dispatch = useDispatch<AppDispatch>();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,7 +29,12 @@ export const LoginPage: React.FC = () => {
     }
 
     setError('');
-    dispatch(loginUser({ email, password }));
+    const user = await dispatch(loginUser({ email, password })).unwrap();
+    if (user.role === RoleEnum.Employee) {
+      navigate('/employee');
+    } else {
+      navigate('/employer');
+    }
   };
 
   return (

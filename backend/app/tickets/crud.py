@@ -10,7 +10,7 @@ async def create_ticket(session: AsyncSession, user_id: int, ticket_in: schemas.
     ticket = Ticket(user_id=user_id, amount=ticket_in.amount, description=ticket_in.description, creator_id=user_id)
     session.add(ticket)
     await session.commit()
-    await session.refresh(ticket)
+    await session.refresh(ticket, attribute_names=["owner"])
     return ticket
 
 async def list_tickets_by_user(session: AsyncSession, user_id: int):
