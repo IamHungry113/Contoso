@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { apiClient } from '../../api/client';
 import { RoleEnum } from './enum';
+import { useDispatch } from 'react-redux';
+import { registerUser } from '../../store/userSlice';
+import type { AppDispatch } from '../../store';
 
 export const Register = () => {
   const [email, setEmail] = useState('');
@@ -8,6 +10,7 @@ export const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState(RoleEnum.Employee);
   const [error, setError] = useState('');
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,9 +30,8 @@ export const Register = () => {
     }
 
     setError('');
-    apiClient.post('/auth/register', { email, password, role, username: email });
 
-    // TODO: 调用后端注册接口
+    dispatch(registerUser({ email, password, role, username: email }));
   };
 
   return (

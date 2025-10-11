@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { apiClient } from '../../api/client';
-import type { User } from '../../store/userSlice';
-import { useNavigate } from 'react-router';
+import { loginUser } from '../../store/userSlice';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../store';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navi = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,14 +24,7 @@ export const LoginPage: React.FC = () => {
     }
 
     setError('');
-    const a = await apiClient.post<User>('/auth/login', { email, password });
-    if (a) {
-      if (a.role === 'employee') {
-        navi('/employee');
-      } else if (a.role === 'employer') {
-        navi('/employer');
-      }
-    }
+    dispatch(loginUser({ email, password }));
   };
 
   return (

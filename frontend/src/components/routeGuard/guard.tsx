@@ -1,7 +1,7 @@
 // components/RoleGuard.tsx
 import { useEffect } from 'react';
 import type { JSX } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
 import { RoleEnum } from '../../pages/register/enum';
@@ -15,12 +15,15 @@ interface Props {
 export default function RoleGuard({ allowedRoles, children }: Props) {
   const { user, loading } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
+    console.log(user);
     if (!loading) {
       if (!user) {
-        // 未登录，重定向到登录页
-        navigate(RoutePath.Login, { replace: true });
+        if (location.pathname !== RoutePath.Register) {
+          navigate(RoutePath.Login, { replace: true });
+        }
       } else if (!allowedRoles.includes(user.role as RoleEnum)) {
         // 越权访问，根据角色重定向
         if (user.role === RoleEnum.Employee) {
@@ -30,7 +33,7 @@ export default function RoleGuard({ allowedRoles, children }: Props) {
         }
       }
     }
-  }, [user, loading, allowedRoles, navigate]);
+  }, [user, loading, allowedRoles, navigate, location]);
 
   if (loading) return <div>Loading...</div>;
 
