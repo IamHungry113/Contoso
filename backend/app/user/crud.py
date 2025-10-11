@@ -2,7 +2,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.user.schemas import Register
-from app.db.models import User, Ticket
+from app.db.models import User
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(

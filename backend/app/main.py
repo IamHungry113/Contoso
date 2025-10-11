@@ -7,10 +7,15 @@ from app.auth.router import router as auth_router
 from app.user.router import router as user_router
 
 app = FastAPI(lifespan=lifespan, title="Contoso Backend")
+origins = [
+    "http://localhost:5173",  # 前端地址
+    # "https://yourfrontend.com"  # 生产环境
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
+    allow_credentials=True,  # 允许带 cookie
     allow_methods=["*"],
     allow_headers=["*"],
 )

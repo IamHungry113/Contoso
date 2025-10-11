@@ -6,6 +6,10 @@ class Settings(BaseSettings):
     app_port: int
     app_host: str
     app_env: str = "development"  # 默认值
+    # 是否开发环境
+    @property
+    def is_dev(self) -> bool:
+        return self.app_env.lower() != "production"
     
     # 数据库配置
     db_url: str

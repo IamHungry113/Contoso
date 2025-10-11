@@ -1,7 +1,8 @@
 import os
 from datetime import datetime, timedelta
 from jose import jwt
-from fastapi import Depends, HTTPException
+from enum import Enum
+from fastapi import Depends, HTTPException, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from .crud import pwd_context
 
@@ -11,8 +12,15 @@ bearer = HTTPBearer()
 
 def create_access_token(data: dict, expires_delta: int = 60*24*7):
     to_encode = data.copy()
+        # 设置过期时间
     expire = datetime.now() + timedelta(minutes=expires_delta)
-    to_encode.update({"exp": expire})
+    to_encode.update({"exp": int(expire.timestamp())})  # datetime -> int timestamp
+
+    # 将 Enum 转成字符串
+    for key, value in to_encode.items():
+        if isinstance(value, Enum):
+            to_encode[key] = value.value
+
     return jwt.encode(to_encode, SECRET, algorithm=ALGO)
 
 def verify_password(plain, hashed):
@@ -31,3 +39,19 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(b
         return CurrentUser(id=int(payload.get("id")), email=payload.get("sub"), role=payload.get("role"))
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+
+async def get_current_user_from_cookie(request: Request):
+    token = request.cookies.get("session_token")  # 从 HttpOnly cookie 获取 token
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    try:
+        payload = jwt.decode(token, SECRET, algorithms=[ALGO])
+        return CurrentUser(
+            id=int(payload.get("id")),
+            email=payload.get("sub"),
+            role=payload.get("role")
+        )
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
