@@ -1,10 +1,10 @@
-import { Routes, Route } from 'react-router';
+import { Routes, Navigate, Route } from 'react-router';
 import { LoginPage } from './login/login';
 import { Register } from './register/register';
-import { EmployeePage } from './user/employee';
 import { RoutePath } from './routePath';
 import RoleGuard from '../components/routeGuard/guard';
 import { RoleEnum } from './register/enum';
+import { EmployeeRoute } from './employee/route';
 
 export const Pages = () => {
   return (
@@ -26,10 +26,10 @@ export const Pages = () => {
         }
       />
       <Route
-        path={RoutePath.Employee}
+        path={`${RoutePath.Employee}/*`}
         element={
           <RoleGuard allowedRoles={[RoleEnum.Employee]}>
-            <EmployeePage />
+            <EmployeeRoute></EmployeeRoute>
           </RoleGuard>
         }
       ></Route>
@@ -41,6 +41,7 @@ export const Pages = () => {
           </RoleGuard>
         }
       ></Route>
+      <Route path="*" element={<Navigate to={RoutePath.Login} replace />} />
     </Routes>
   );
 };

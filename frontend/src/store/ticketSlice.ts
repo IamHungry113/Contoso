@@ -8,6 +8,7 @@ export interface Ticket {
   user: string;
   amount: number;
   link?: string;
+  description?: string;
 }
 
 interface TicketsState {

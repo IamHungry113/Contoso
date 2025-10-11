@@ -20,4 +20,7 @@ class User(Base):
     role = Column(Enum(UserRole), default=UserRole.employee, nullable=False)
     is_active = Column(Boolean, default=True)
 
-    tickets = relationship("Ticket", back_populates="owner")
+    # 用户自己拥有的票
+    tickets = relationship("Ticket", back_populates="owner", foreign_keys="Ticket.user_id")
+    # 用户创建的票
+    tickets_created = relationship("Ticket", back_populates="creator", foreign_keys="Ticket.creator_id")

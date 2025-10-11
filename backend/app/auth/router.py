@@ -19,9 +19,7 @@ async def register(data: Register, response: Response, session: AsyncSession = D
     if user:
         raise HTTPException(status_code=400, detail="Email already registered")
     user = await user_crud.create_user(session, data)
-    print('test user', user)
     token = create_access_token({"sub": user.email, "role": user.role, "id": user.id})
-    print('test token', token)
 
     # 设置到浏览器 cookie 中
     response.set_cookie(

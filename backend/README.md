@@ -35,3 +35,20 @@ docker run --name contoso-pg -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postg
 ```sh
 uv run fastapi dev app/main.py
 ```
+
+# 3 db migration
+
+if you want to change db table structure you can change models and run
+
+```sh
+
+alembic revision --autogenerate -m "your change title"
+
+alembic upgrade head
+```
+
+verify your db status
+
+```sh
+alembic current
+```

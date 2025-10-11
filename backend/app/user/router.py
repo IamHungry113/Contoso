@@ -12,14 +12,14 @@ router = APIRouter(
 )
 
 @router.get("/", response_model=list[UserOut])
-async def list_employees(current=Depends(auth.get_current_user)):
+async def list_employees(current=Depends(auth.get_current_user_from_cookie)):
     if current.role != "employer":
         raise HTTPException(status_code=403, detail="Only employers")
     async with async_session() as session:
         return await list_users(session)
 
 @router.post("/{user_id}/suspend")
-async def suspend_user(user_id: int, current=Depends(auth.get_current_user)):
+async def suspend_user(user_id: int, current=Depends(auth.get_current_user_from_cookie)):
     if current.role != "employer":
         raise HTTPException(status_code=403, detail="Only employers")
     async with async_session() as session:
@@ -29,7 +29,7 @@ async def suspend_user(user_id: int, current=Depends(auth.get_current_user)):
         return {"ok": True}
 
 @router.post("/{user_id}/activate")
-async def activate_user(user_id: int, current=Depends(auth.get_current_user)):
+async def activate_user(user_id: int, current=Depends(auth.get_current_user_from_cookie)):
     if current.role != "employer":
         raise HTTPException(status_code=403, detail="Only employers")
     async with async_session() as session:

@@ -18,7 +18,6 @@ export default function RoleGuard({ allowedRoles, children }: Props) {
   const location = useLocation();
 
   useEffect(() => {
-    console.log(user);
     if (!loading) {
       if (!user) {
         if (location.pathname !== RoutePath.Register) {
@@ -33,7 +32,7 @@ export default function RoleGuard({ allowedRoles, children }: Props) {
         }
       }
     }
-  }, [user, loading, allowedRoles, navigate, location]);
+  }, [user, location]);
 
   if (loading) return <div>Loading...</div>;
 
